@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="en"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
+  <title>Maybal Voucher</title> 
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Myanmar Text', sans-serif;
+      background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753), rgba(255, 0, 106, 0.774), rgba(247, 0, 255, 0.767));
+      background-size: 600% 600%;
+      animation: gradientBG 15s ease infinite;
+      color: #3A3A3A;
+      padding: 20px;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.692);
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+    }
+
+    h1 {
+      text-align: center;
+      color: rgba(104, 0, 241, 0.753);
+      text-shadow: 0 0 8px #ffffffa4;
+      margin-bottom: 15px;
+      margin-top: 40px;
+    }
+
+    h2 {
+      text-align: center;
+      color: rgba(104, 0, 241, 0.753);
+      text-shadow: 0 0 8px #ffffffa4;
+      margin-bottom: 10px;
+      margin-top: 60px;
+    }
+
+    .aaa {
+      text-align: center;
+      font-size: 10px;
+      color: rgba(56, 43, 43, 0.5);
+      margin-top: 5px;
+    }
+
+    #detailsForm {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    form input {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: rgba(255, 255, 255, 0.7);
+      color: #3A3A3A;
+    }
+
+    #addItemBtn {
+      position: absolute;
+      top: 200px;
+      left: 20px;
+      background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+      color: white;
+      padding: 10px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+      transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+      z-index: 10;
+      width: 120px;
+      text-align: center;
+    }
+
+    #addItemBtn:hover {
+      background: linear-gradient(-45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+      transform: scale(1.05);
+    }
+
+    #itemFormContainer {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(104, 0, 241, 0.3);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 35;
+      width: 300px;
+    }
+
+    #itemFormContainer.visible {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    #itemForm {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #itemForm button[type="submit"] {
+      background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+      color: white;
+      padding: 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: 0.3s ease;
+    }
+
+    #itemForm button[type="submit"]:hover {
+      background: linear-gradient(-45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+      transform: scale(1.02);
+    }
+
+    #closeFormBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.1);
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #555;
+      font-weight: bold;
+      transition: 0.3s ease;
+    }
+
+    #closeFormBtn:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    #dynamicIsland {
+      position: absolute;
+      top: 200px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(104, 0, 241, 0.3);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transform: scale(0);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 30;
+      display: flex;
+      gap: 10px;
+    }
+
+    #dynamicIsland.visible {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .action-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: white;
+      font-size: 18px;
+    }
+
+    .action-icon:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .edit-icon { background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753)); }
+    .delete-icon { background: linear-gradient(45deg, rgba(255, 0, 106, 0.774), rgba(247, 0, 255, 0.767)) }
+
+    #voucher { margin-top: 25px; }
+
+    .voucher-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: rgba(104, 0, 241, 0.753);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: rgba(104, 0, 241, 0.753);
+      color: white;
+    }
+
+    tr:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .item-name {
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .item-name:hover {
+      color: rgba(104, 0, 241, 0.753);
+    }
+
+    #grandTotal {
+      font-size: 18px;
+      text-align: center;
+      margin-top: 10px;
+      color: #3A3A3A;
+    }
+
+    #saveBtn {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 25px;
+      background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+      color: #fff;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+      transition: 0.3s ease;
+    }
+
+    #saveBtn:hover {
+      background: linear-gradient(-45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+      transform: scale(1.05);
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: transparent;
+      z-index: 15;
+      display: none;
+    }
+
+    /* Folder System Styles */
+    #folderSystem {
+      margin: 20px 0;
+      display: none;
+    }
+
+    #folderSystem.visible {
+      display: block;
+    }
+
+    #folderControls {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    #createFolderBtn {
+      background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: 0.3s ease;
+    }
+
+    #createFolderBtn:hover {
+      background: linear-gradient(-45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+      transform: scale(1.02);
+    }
+
+    #backToFoldersBtn {
+      background: linear-gradient(45deg, #666, #999);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: 0.3s ease;
+      display: none;
+    }
+
+    #backToFoldersBtn:hover {
+      background: linear-gradient(-45deg, #666, #999);
+      transform: scale(1.02);
+    }
+
+    #folderList {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .folder {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .folder:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .folder-icon {
+      font-size: 40px;
+      color: rgba(104, 0, 241, 0.753);
+      margin-bottom: 10px;
+    }
+
+    .folder-name {
+      font-weight: bold;
+      color: #3A3A3A;
+      word-break: break-word;
+    }
+
+    #folderFormContainer {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(104, 0, 241, 0.3);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 35;
+      width: 300px;
+    }
+
+    #folderFormContainer.visible {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    #folderForm {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #folderForm button[type="submit"] {
+      background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+      color: white;
+      padding: 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: 0.3s ease;
+    }
+
+    #folderForm button[type="submit"]:hover {
+      background: linear-gradient(-45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+      transform: scale(1.02);
+    }
+
+    #folderCloseFormBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.1);
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #555;
+      font-weight: bold;
+      transition: 0.3s ease;
+    }
+
+    #folderCloseFormBtn:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    #folderDynamicIsland {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(104, 0, 241, 0.3);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 30;
+      display: flex;
+      gap: 10px;
+    }
+
+    #folderDynamicIsland.visible {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    #voucherSystem {
+      display: none;
+    }
+
+    #voucherSystem.visible {
+      display: block;
+    }
+
+    #closeVoucherSystemBtn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.1);
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #555;
+      font-weight: bold;
+      transition: 0.3s ease;
+    }
+
+    #closeVoucherSystemBtn:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    /* Confirmation Dialogs */
+    #folderConfirmDialog, #itemConfirmDialog {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+      z-index: 35;
+      text-align: center;
+      width: 300px;
+    }
+
+    #folderConfirmDialog p, #itemConfirmDialog p {
+      color: #3A3A3A;
+      margin-bottom: 20px;
+    }
+
+    #folderConfirmDialog .dialog-buttons, #itemConfirmDialog .dialog-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    #folderConfirmDialog button, #itemConfirmDialog button {
+      padding: 8px 15px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+    }
+
+    .confirm-btn {
+      background: linear-gradient(45deg,  rgba(255, 0, 106, 0.774), rgba(247, 0, 255, 0.767));
+    }
+
+    .cancel-btn {
+      background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+    }
+
+    /* Item Name Dropdown Styles */
+    .item-input-container {
+      position: relative;
+    }
+    
+    #itemNameDropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      z-index: 40;
+      display: none;
+    }
+    
+    .dropdown-item {
+      padding: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .dropdown-item:hover {
+      background: rgba(104, 0, 241, 0.1);
+    }
+    
+    #itemName {
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      table { font-size: 12px; }
+      #itemFormContainer, #dynamicIsland, #folderFormContainer, #folderDynamicIsland, #folderConfirmDialog, #itemConfirmDialog {
+        width: calc(100% - 40px);
+      }
+      #folderList {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      }
+    }
+  </style> 
+ </head> 
+ <body> 
+  <div class="container"> 
+   <h1>Voucher Generator</h1> 
+   <div id="overlay"></div> <!-- Folder System --> 
+   <div id="folderSystem" class="visible"> 
+    <div id="folderControls"> <button id="createFolderBtn">Create folder</button> <button id="backToFoldersBtn" style="display: none;">Back to Folders</button> 
+    </div> 
+    <div id="folderList"></div> 
+   </div> <!-- Folder Form --> 
+   <div id="folderFormContainer"> 
+    <form id="folderForm"> 
+     <input type="text" id="folderName" placeholder="Folder Name" required> <button type="submit" id="folderFormSubmitBtn">Create</button> 
+    </form> 
+   </div> <!-- Folder Dynamic Island --> 
+   <div id="folderDynamicIsland"> 
+    <div class="action-icon edit-icon" id="folderIslandEditBtn" title="Edit">
+     🖋️
+    </div> 
+    <div class="action-icon delete-icon" id="folderIslandDeleteBtn" title="Delete">
+     🗑️
+    </div> 
+   </div> <!-- Folder Deletion Confirmation Dialog --> 
+   <div id="folderConfirmDialog"> 
+    <p>本当に削除しますか?</p> 
+    <div class="dialog-buttons"> <button id="confirmFolderDelete" class="confirm-btn">削除</button> <button id="cancelFolderDelete" class="cancel-btn">キャンセル</button> 
+    </div> 
+   </div> <!-- Voucher System --> 
+   <div id="voucherSystem"> <button id="closeVoucherSystemBtn">×</button> 
+    <form id="detailsForm"> 
+     <input type="text" id="recipientName" placeholder="Recipient's Name" required> 
+     <input type="date" id="voucherDate" required> 
+    </form> <button id="addItemBtn">Add Item</button> 
+    <div id="itemFormContainer"> <button id="closeFormBtn">×</button> 
+     <form id="itemForm"> 
+      <div class="item-input-container"> 
+       <input type="text" id="itemName" placeholder="Item Name or select from list" required> 
+       <div id="itemNameDropdown"> <!-- Dropdown items will be added by JavaScript --> 
+       </div> 
+      </div> 
+      <input type="number" id="itemQuantity" placeholder="Quantity" required> 
+      <input type="number" id="itemPrice" placeholder="Price" required> <button type="submit" id="formSubmitBtn">Add Item</button> 
+     </form> 
+    </div> 
+    <div id="dynamicIsland"> 
+     <div class="action-icon edit-icon" id="islandEditBtn" title="Edit">
+      🖋️
+     </div> 
+     <div class="action-icon delete-icon" id="islandDeleteBtn" title="Delete">
+      🗑️
+     </div> 
+    </div> 
+    <div id="voucher"> 
+     <h2>Maybal</h2> 
+     <div class="voucher-header"> 
+      <p id="displayRecipientName"></p> 
+      <p id="displayVoucherDate"></p> 
+     </div> 
+     <div style="overflow-x: auto;"> 
+      <table id="voucherTable"> 
+       <thead> 
+        <tr> 
+         <th>Item Name</th> 
+         <th>Quantity</th> 
+         <th>Price</th> 
+         <th>Total</th> 
+        </tr> 
+       </thead> 
+       <tbody></tbody> 
+      </table> 
+     </div> 
+     <h3 id="grandTotal">Grand Total: 0 ကျပ်</h3> 
+     <div class="aaa">
+      ©️Aung Kaung Myat production
+     </div> 
+    </div> <button id="saveBtn">Save Voucher</button> 
+   </div> <!-- Item Deletion Confirmation Dialog --> 
+   <div id="itemConfirmDialog"> 
+    <p>本当に削除しますか?</p> 
+    <div class="dialog-buttons"> <button id="confirmItemDelete" class="confirm-btn">削除</button> <button id="cancelItemDelete" class="cancel-btn">キャンセル</button> 
+    </div> 
+   </div> 
+  </div> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> 
+  <script>
+    // DOM Elements
+    const addItemBtn = document.getElementById('addItemBtn');
+    const itemFormContainer = document.getElementById('itemFormContainer');
+    const closeFormBtn = document.getElementById('closeFormBtn');
+    const overlay = document.getElementById('overlay');
+    const itemForm = document.getElementById('itemForm');
+    const dynamicIsland = document.getElementById('dynamicIsland');
+    const islandEditBtn = document.getElementById('islandEditBtn');
+    const islandDeleteBtn = document.getElementById('islandDeleteBtn');
+    const formSubmitBtn = document.getElementById('formSubmitBtn');
+    const recipientNameInput = document.getElementById('recipientName');
+    const voucherDateInput = document.getElementById('voucherDate');
+    const saveBtn = document.getElementById('saveBtn');
+
+    // Folder System Elements
+    const folderSystem = document.getElementById('folderSystem');
+    const voucherSystem = document.getElementById('voucherSystem');
+    const createFolderBtn = document.getElementById('createFolderBtn');
+    const backToFoldersBtn = document.getElementById('backToFoldersBtn');
+    const folderList = document.getElementById('folderList');
+    const folderFormContainer = document.getElementById('folderFormContainer');
+    const folderForm = document.getElementById('folderForm');
+    const folderCloseFormBtn = document.getElementById('folderCloseFormBtn');
+    const folderFormSubmitBtn = document.getElementById('folderFormSubmitBtn');
+    const folderDynamicIsland = document.getElementById('folderDynamicIsland');
+    const folderIslandEditBtn = document.getElementById('folderIslandEditBtn');
+    const folderIslandDeleteBtn = document.getElementById('folderIslandDeleteBtn');
+    const closeVoucherSystemBtn = document.getElementById('closeVoucherSystemBtn');
+    const folderConfirmDialog = document.getElementById('folderConfirmDialog');
+    const confirmFolderDelete = document.getElementById('confirmFolderDelete');
+    const cancelFolderDelete = document.getElementById('cancelFolderDelete');
+    const itemConfirmDialog = document.getElementById('itemConfirmDialog');
+    const confirmItemDelete = document.getElementById('confirmItemDelete');
+    const cancelItemDelete = document.getElementById('cancelItemDelete');
+
+    // Item Name Dropdown Elements
+    const itemNameInput = document.getElementById('itemName');
+    const itemNameDropdown = document.getElementById('itemNameDropdown');
+
+    // Predefined item names
+    const predefinedItems = [
+      "ကော်ပိတ်",
+      "ကချင်one set",
+      "ဇာone set",
+      "ပါတိတ်one set",
+      "စီးကွင့်",
+      "Hand Made",
+      "ချိတ်ထမီ",
+      "ပတ်ထမီ",
+      "No Bra",
+      "ဂါဝန်",
+      "နှစ်ထပ်ချုပ်",
+      "ရင်ဖုန်း",
+      "နောက်ဇစ်"
+    ];
+
+    let selectedRow = null;
+    let editIndex = null;
+    let selectedFolder = null;
+    let editFolderIndex = null;
+    let currentFolderId = null;
+
+    // Initialize
+    loadFolders();
+    initDropdown();
+
+    // Initialize dropdown items
+    function initDropdown() {
+      itemNameDropdown.innerHTML = '';
+      predefinedItems.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'dropdown-item';
+        div.textContent = item;
+        div.addEventListener('click', () => {
+          itemNameInput.value = item;
+          itemNameDropdown.style.display = 'none';
+        });
+        itemNameDropdown.appendChild(div);
+      });
+    }
+
+    // Show dropdown when focusing on item name input
+    itemNameInput.addEventListener('focus', () => {
+      initDropdown();
+      itemNameDropdown.style.display = 'block';
+    });
+
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!itemNameInput.contains(e.target) && !itemNameDropdown.contains(e.target)) {
+        itemNameDropdown.style.display = 'none';
+      }
+    });
+
+    // Filter dropdown items when typing
+    itemNameInput.addEventListener('input', () => {
+      const searchTerm = itemNameInput.value.toLowerCase();
+      const items = itemNameDropdown.querySelectorAll('.dropdown-item');
+      
+      items.forEach(item => {
+        if (item.textContent.toLowerCase().includes(searchTerm)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+
+    // Folder System Functions
+    function loadFolders() {
+      const folders = JSON.parse(localStorage.getItem('folders')) || [];
+      folderList.innerHTML = '';
+      
+      if (folders.length === 0) {
+        folderList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">No folders created yet</p>';
+      } else {
+        folders.forEach((folder, index) => {
+          const folderElement = document.createElement('div');
+          folderElement.className = 'folder';
+          folderElement.innerHTML = `
+            <div class="folder-icon">📁</div>
+            <div class="folder-name">${folder.name}</div>
+          `;
+          folderElement.addEventListener('click', () => openFolder(folder.id));
+          folderElement.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            showFolderDynamicIsland(folder, index);
+          });
+          folderList.appendChild(folderElement);
+        });
+      }
+    }
+
+    function openFolder(folderId) {
+      currentFolderId = folderId;
+      folderSystem.classList.remove('visible');
+      voucherSystem.classList.add('visible');
+      backToFoldersBtn.style.display = 'block';
+      loadVoucherData(folderId);
+    }
+
+    function closeFolder() {
+      currentFolderId = null;
+      folderSystem.classList.add('visible');
+      voucherSystem.classList.remove('visible');
+      backToFoldersBtn.style.display = 'none';
+      saveVoucherData();
+    }
+
+    function showFolderForm(isEdit = false, folder = null) {
+      folderFormContainer.classList.add('visible');
+      overlay.style.display = 'block';
+      folderFormSubmitBtn.textContent = isEdit ? 'Update Folder' : 'Create Folder';
+      
+      if (isEdit && folder) {
+        document.getElementById('folderName').value = folder.name;
+      } else {
+        document.getElementById('folderName').value = '';
+      }
+    }
+
+    function closeFolderForm() {
+      folderFormContainer.classList.remove('visible');
+      overlay.style.display = 'none';
+      folderForm.reset();
+      editFolderIndex = null;
+      hideFolderDynamicIsland();
+    }
+
+    function showFolderDynamicIsland(folder, index) {
+      selectedFolder = folder;
+      editFolderIndex = index;
+      folderDynamicIsland.classList.add('visible');
+      overlay.style.display = 'block';
+    }
+
+    function hideFolderDynamicIsland() {
+      folderDynamicIsland.classList.remove('visible');
+      overlay.style.display = 'none';
+      selectedFolder = null;
+      editFolderIndex = null;
+    }
+
+    // Folder Form Submission
+    folderForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = document.getElementById('folderName').value.trim();
+      const folders = JSON.parse(localStorage.getItem('folders')) || [];
+
+      if (name === '') {
+        alert('Folder name cannot be empty');
+        return;
+      }
+
+      if (folders.some(f => f.name === name && f.id !== (editFolderIndex !== null ? folders[editFolderIndex].id : null))) {
+        alert('Folder name already exists');
+        return;
+      }
+
+      if (editFolderIndex !== null) {
+        folders[editFolderIndex].name = name;
+      } else {
+        const newFolder = {
+          id: Date.now().toString(),
+          name: name,
+          voucherData: {
+            recipientName: '',
+            voucherDate: '',
+            items: []
+          }
+        };
+        folders.push(newFolder);
+      }
+
+      localStorage.setItem('folders', JSON.stringify(folders));
+      closeFolderForm();
+      loadFolders();
+    });
+
+    // Folder Dynamic Island Actions
+    folderIslandEditBtn.addEventListener('click', () => {
+      if (selectedFolder) {
+        showFolderForm(true, selectedFolder);
+      }
+    });
+
+    folderIslandDeleteBtn.addEventListener('click', () => {
+      folderConfirmDialog.style.display = 'block';
+      overlay.style.display = 'block';
+    });
+
+    confirmFolderDelete.addEventListener('click', () => {
+      if (selectedFolder) {
+        const folders = JSON.parse(localStorage.getItem('folders')) || [];
+        folders.splice(editFolderIndex, 1);
+        localStorage.setItem('folders', JSON.stringify(folders));
+        hideFolderDynamicIsland();
+        loadFolders();
+        folderConfirmDialog.style.display = 'none';
+        overlay.style.display = 'none';
+      }
+    });
+
+    cancelFolderDelete.addEventListener('click', () => {
+      folderConfirmDialog.style.display = 'none';
+      overlay.style.display = 'none';
+    });
+
+    // Back to folders button
+    backToFoldersBtn.addEventListener('click', closeFolder);
+
+    // Close voucher system button
+    closeVoucherSystemBtn.addEventListener('click', closeFolder);
+
+    // Create folder button
+    createFolderBtn.addEventListener('click', () => showFolderForm());
+
+    // Overlay click handler
+    overlay.addEventListener('click', () => {
+      closeForm();
+      hideDynamicIsland();
+      closeFolderForm();
+      hideFolderDynamicIsland();
+      folderConfirmDialog.style.display = 'none';
+      itemConfirmDialog.style.display = 'none';
+      itemNameDropdown.style.display = 'none';
+    });
+
+    // Voucher System Functions
+    function loadVoucherData(folderId) {
+      const folders = JSON.parse(localStorage.getItem('folders')) || [];
+      const folder = folders.find(f => f.id === folderId);
+      
+      if (!folder) return;
+      
+      const voucherData = folder.voucherData || {
+        recipientName: '',
+        voucherDate: '',
+        items: []
+      };
+      
+      recipientNameInput.value = voucherData.recipientName;
+      voucherDateInput.value = voucherData.voucherDate;
+      document.getElementById('displayRecipientName').textContent = voucherData.recipientName;
+      document.getElementById('displayVoucherDate').textContent = voucherData.voucherDate;
+      
+      document.querySelector('#voucherTable tbody').innerHTML = '';
+      
+      voucherData.items.forEach(item => addItemToTable(item.name, item.quantity, item.price));
+      updateGrandTotal();
+    }
+
+    function saveVoucherData() {
+      if (!currentFolderId) return;
+      
+      const items = [];
+      document.querySelectorAll('#voucherTable tbody tr').forEach(row => {
+        items.push({
+          name: row.children[0].textContent,
+          quantity: parseInt(row.children[1].textContent),
+          price: parseFloat(row.children[2].textContent.replace(' ကျပ်', ''))
+        });
+      });
+      
+      const voucherData = {
+        recipientName: recipientNameInput.value,
+        voucherDate: voucherDateInput.value,
+        items
+      };
+      
+      const folders = JSON.parse(localStorage.getItem('folders')) || [];
+      const folderIndex = folders.findIndex(f => f.id === currentFolderId);
+      
+      if (folderIndex !== -1) {
+        folders[folderIndex].voucherData = voucherData;
+        localStorage.setItem('folders', JSON.stringify(folders));
+      }
+    }
+
+    // Show/Hide Form
+    function showForm(isEdit = false) {
+      itemFormContainer.classList.add('visible');
+      overlay.style.display = 'block';
+      addItemBtn.style.opacity = '0';
+      setTimeout(() => addItemBtn.style.display = 'none', 400);
+      formSubmitBtn.textContent = isEdit ? 'Update Item' : 'Add Item';
+    }
+
+    function closeForm() {
+      itemFormContainer.classList.remove('visible');
+      overlay.style.display = 'none';
+      addItemBtn.style.display = 'block';
+      setTimeout(() => addItemBtn.style.opacity = '1', 50);
+      itemForm.reset();
+      editIndex = null;
+      hideDynamicIsland();
+    }
+
+    // Show/Hide Dynamic Island
+    function showDynamicIsland(row, index) {
+      selectedRow = row;
+      editIndex = index;
+      dynamicIsland.classList.add('visible');
+      overlay.style.display = 'block';
+      addItemBtn.style.opacity = '0';
+      setTimeout(() => addItemBtn.style.display = 'none', 400);
+    }
+
+    function hideDynamicIsland() {
+      dynamicIsland.classList.remove('visible');
+      overlay.style.display = 'none';
+      addItemBtn.style.display = 'block';
+      setTimeout(() => addItemBtn.style.opacity = '1', 50);
+      selectedRow = null;
+      editIndex = null;
+    }
+
+    // Add item to table
+    function addItemToTable(name, quantity, price) {
+      const total = (quantity * price).toFixed(0);
+      const tableBody = document.querySelector('#voucherTable tbody');
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="item-name">${name}</td>
+        <td>${quantity}</td>
+        <td>${price} ကျပ်</td>
+        <td>${total} ကျပ်</td>
+      `;
+      tableBody.appendChild(row);
+      row.querySelector('.item-name').addEventListener('click', () => {
+        const rows = Array.from(document.querySelectorAll('#voucherTable tbody tr'));
+        showDynamicIsland(row, rows.indexOf(row));
+      });
+    }
+
+    // Update grand total
+    function updateGrandTotal() {
+      const rows = document.querySelectorAll('#voucherTable tbody tr');
+      let grandTotal = 0;
+      rows.forEach(row => {
+        const total = parseFloat(row.children[3].textContent.replace(' ကျပ်', ''));
+        grandTotal += total;
+      });
+      document.getElementById('grandTotal').textContent = `Grand Total: ${grandTotal.toFixed(0)} ကျပ်`;
+      saveVoucherData();
+    }
+
+    // Event Listeners
+    addItemBtn.addEventListener('click', () => showForm());
+
+    closeFormBtn.addEventListener('click', closeForm);
+
+    // Details Form
+    document.getElementById('detailsForm').addEventListener('input', () => {
+      document.getElementById('displayRecipientName').textContent = recipientNameInput.value;
+      document.getElementById('displayVoucherDate').textContent = voucherDateInput.value;
+      saveVoucherData();
+    });
+
+    // Item Form Submission
+    itemForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = document.getElementById('itemName').value;
+      const quantity = parseInt(document.getElementById('itemQuantity').value);
+      const price = parseFloat(document.getElementById('itemPrice').value);
+
+      if (editIndex !== null) {
+        const rows = document.querySelectorAll('#voucherTable tbody tr');
+        const row = rows[editIndex];
+        const total = (quantity * price).toFixed(0);
+        row.innerHTML = `
+          <td class="item-name">${name}</td>
+          <td>${quantity}</td>
+          <td>${price} ကျပ်</td>
+          <td>${total} ကျပ်</td>
+        `;
+        row.querySelector('.item-name').addEventListener('click', () => {
+          const rows = Array.from(document.querySelectorAll('#voucherTable tbody tr'));
+          showDynamicIsland(row, rows.indexOf(row));
+        });
+      } else {
+        addItemToTable(name, quantity, price);
+      }
+
+      updateGrandTotal();
+      closeForm();
+    });
+
+    // Dynamic Island Actions
+    islandEditBtn.addEventListener('click', () => {
+      if (selectedRow) {
+        const name = selectedRow.children[0].textContent;
+        const quantity = parseInt(selectedRow.children[1].textContent);
+        const price = parseFloat(selectedRow.children[2].textContent.replace(' ကျပ်', ''));
+        document.getElementById('itemName').value = name;
+        document.getElementById('itemQuantity').value = quantity;
+        document.getElementById('itemPrice').value = price;
+        showForm(true);
+        // Keep dynamicIsland visible behind itemFormContainer
+      }
+    });
+
+    islandDeleteBtn.addEventListener('click', () => {
+      itemConfirmDialog.style.display = 'block';
+      overlay.style.display = 'block';
+      // Keep dynamicIsland visible behind itemConfirmDialog
+    });
+
+    confirmItemDelete.addEventListener('click', () => {
+      if (selectedRow) {
+        selectedRow.remove();
+        updateGrandTotal();
+        hideDynamicIsland();
+        itemConfirmDialog.style.display = 'none';
+        overlay.style.display = 'none';
+      }
+    });
+
+    cancelItemDelete.addEventListener('click', () => {
+      itemConfirmDialog.style.display = 'none';
+      overlay.style.display = 'none';
+      // Keep dynamicIsland visible
+    });
+
+    // Save Voucher as Image
+    saveBtn.addEventListener('click', () => {
+      const voucher = document.getElementById('voucher');
+      html2canvas(voucher, { 
+        useCORS: true, 
+        scale: window.devicePixelRatio || 2,
+        backgroundColor: null
+      }).then(canvas => {
+        canvas.toBlob(blob => {
+          const link = document.createElement('a');
+          link.download = `voucher_${recipientNameInput.value || 'unnamed'}_${new Date().toISOString().split('T')[0]}.jpg`;
+          link.href = URL.createObjectURL(blob);
+          link.click();
+          URL.revokeObjectURL(link.href);
+        }, 'image/jpeg', 0.95);
+      }).catch(error => {
+        alert('Voucher ကို capture လုပ်မရပါ - ' + error);
+      });
+    });
+  </script> 
+ 
+</body></html>
